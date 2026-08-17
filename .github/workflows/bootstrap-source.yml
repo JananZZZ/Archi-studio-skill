@@ -1,0 +1,44 @@
+name: bootstrap-source
+
+on:
+  push:
+    paths:
+      - '.bootstrap/**'
+      - '.github/workflows/bootstrap-source.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: archi-studio-bootstrap
+  cancel-in-progress: false
+
+jobs:
+  unpack-source:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Verify and unpack source payload
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat .bootstrap/payload-* > /tmp/archi-source.b64
+          base64 --decode /tmp/archi-source.b64 > /tmp/archi-source.tar.gz
+          echo "8fc94a1c75c6b83e103da6be060cc722ddfcb0a4bd7593613765af2517ef42e0  /tmp/archi-source.tar.gz" | sha256sum -c -
+          tar -xzf /tmp/archi-source.tar.gz -C .
+          rm -rf .bootstrap
+      - name: Commit bootstrapped source
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No source changes to commit."
+            exit 0
+          fi
+          git commit -m "feat: release Archi Studio Skill 1.0.0"
+          git push origin HEAD:main
