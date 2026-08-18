@@ -3,8 +3,7 @@ name: release-bootstrap-v3
 on:
   push:
     branches: [main]
-    paths:
-      - ".github/workflows/release-bootstrap-v3.yml"
+  workflow_dispatch:
 
 permissions:
   contents: write
