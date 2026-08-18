@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Archi Studio Questionnaire",
+  "type": "object",
+  "properties": {
+    "mode": {"enum": ["resume", "portfolio", "academic", "business"]},
+    "density": {"enum": ["concise", "balanced", "detailed"]},
+    "language": {"enum": ["zh+en", "bilingual", "zh", "en"]},
+    "palette": {"enum": ["cool-professional", "portfolio-premium", "academic-light", "warm-business"]},
+    "emphasis": {"enum": ["product_evolution", "technical", "balanced"]},
+    "interactive_editor": {"type": "boolean"}
+  },
+  "required": ["mode", "density", "language", "palette", "emphasis"]
+}

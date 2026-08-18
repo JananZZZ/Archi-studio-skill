@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Archi Studio Visual Config",
+  "type": "object",
+  "properties": {
+    "mode": {"type": "string"},
+    "density": {"type": "string"},
+    "language": {"type": "string"},
+    "palette": {"type": "string"},
+    "emphasis": {"type": "string"},
+    "interactive_editor": {"type": "boolean"},
+    "aspect_ratio": {"type": "string"},
+    "width_mm": {"type": "number", "minimum": 40},
+    "height_mm": {"type": "number", "minimum": 60},
+    "typography_scale": {"type": "number", "minimum": 0.8, "maximum": 1.3},
+    "spacing_scale": {"type": "number", "minimum": 0.75, "maximum": 1.4}
+  }
+}

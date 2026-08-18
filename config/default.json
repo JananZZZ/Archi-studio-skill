@@ -1,0 +1,13 @@
+{
+  "mode": "portfolio",
+  "density": "balanced",
+  "language": "zh+en",
+  "palette": "portfolio-premium",
+  "emphasis": "balanced",
+  "interactive_editor": true,
+  "aspect_ratio": "1:2",
+  "width_mm": 94,
+  "height_mm": 188,
+  "typography_scale": 1.0,
+  "spacing_scale": 1.0
+}

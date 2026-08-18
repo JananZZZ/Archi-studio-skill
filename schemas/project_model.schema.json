@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Archi Studio Project Model",
+  "type": "object",
+  "required": ["name", "positioning", "capabilities", "tech_stack", "modules", "evidence"],
+  "properties": {
+    "name": {"type": "string"},
+    "positioning": {"type": "string"},
+    "target_users": {"type": "array", "items": {"type": "string"}},
+    "pain_points": {"type": "array", "items": {"type": "string"}},
+    "evolution": {"type": "array", "items": {"type": "object"}},
+    "capabilities": {"type": "array", "items": {"type": "string"}},
+    "tech_stack": {"type": "object", "additionalProperties": {"type": "array", "items": {"type": "string"}}},
+    "modules": {"type": "array", "items": {"type": "object"}},
+    "flows": {"type": "array", "items": {"type": "object"}},
+    "quality_release": {"type": "array", "items": {"type": "string"}},
+    "evidence": {"type": "array", "items": {"type": "object"}},
+    "inferred_notes": {"type": "array", "items": {"type": "string"}}
+  }
+}

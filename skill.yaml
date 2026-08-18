@@ -1,0 +1,38 @@
+name: Archi-studio-skill
+display_name: Archi Studio Skill
+version: 1.0.0
+description: >
+  Agent-first dual architecture diagram studio. Ingest project materials, ask a compact
+  interactive questionnaire, build a semantic project model, generate project and
+  technical architecture diagrams, auto-optimize layout/typography/colors, run quality
+  checks, export SVG/PNG/PDF/source, and provide an interactive browser editor.
+entrypoint: archi_studio.orchestrator:ArchiStudio
+prompt: SYSTEM_PROMPT.md
+capabilities:
+  - project_material_intake
+  - semantic_project_modeling
+  - interactive_questionnaire
+  - project_architecture_planning
+  - technical_architecture_planning
+  - vector_svg_rendering
+  - automatic_layout_optimization
+  - typography_finetuning
+  - palette_selection
+  - quality_assurance
+  - interactive_browser_editing
+  - svg_png_pdf_export
+  - a4_side_by_side_export
+outputs:
+  - svg
+  - png
+  - pdf
+  - json
+  - html
+  - python_source
+defaults:
+  mode: portfolio
+  density: balanced
+  language: zh+en
+  palette: cool-professional
+  project_aspect_ratio: "1:2"
+  technical_aspect_ratio: "1:2"

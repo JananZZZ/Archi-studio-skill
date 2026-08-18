@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Archi Studio Diagram Spec",
+  "type": "object",
+  "required": ["kind", "title", "subtitle", "sections"],
+  "properties": {
+    "kind": {"enum": ["project", "technical"]},
+    "title": {"type": "string"},
+    "subtitle": {"type": "string"},
+    "sections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "title_en", "color", "nodes"],
+        "properties": {
+          "id": {"type": "string"},
+          "title": {"type": "string"},
+          "title_en": {"type": "string"},
+          "color": {"type": "string"},
+          "note": {"type": "string"},
+          "nodes": {"type": "array", "items": {"type": "object"}}
+        }
+      }
+    }
+  }
+}
