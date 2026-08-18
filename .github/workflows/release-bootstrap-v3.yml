@@ -73,15 +73,21 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-
-          # The PR head is only a transport carrier. Build the actual release commit
-          # directly on the latest remote main so the final push is a normal
-          # fast-forward even if main advanced while the bootstrap PR was running.
           git fetch origin main
           git checkout -B publish-base origin/main
 
+          # GitHub's workflow token cannot create/update workflow definitions without
+          # the separate workflows permission. Preserve the currently authorized
+          # workflow directory during the source-only publication. The connector will
+          # install the final release-gate workflow after this bootstrap commit lands.
+          mkdir -p /tmp/archi-current-github
+          cp -a .github/workflows /tmp/archi-current-github/workflows
+
           find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
           tar -xzf /tmp/archi-release.tar.gz -C .
+          rm -rf .github/workflows
+          mkdir -p .github
+          cp -a /tmp/archi-current-github/workflows .github/workflows
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
