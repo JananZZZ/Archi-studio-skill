@@ -1,0 +1,78 @@
+name: release-bootstrap-v3
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/release-bootstrap-v3.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Verify trusted transport
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(wc -c < .bootstrap-v3/chunk-00)" -eq 6000
+          test "$(wc -c < .bootstrap-v3/chunk-01)" -eq 6000
+          test "$(wc -c < .bootstrap-v3/chunk-02)" -eq 6000
+          test "$(wc -c < .bootstrap-v3/chunk-03a)" -eq 3000
+          test "$(wc -c < .bootstrap-v3/chunk-03b)" -eq 3000
+          test "$(wc -c < .bootstrap-v3/chunk-04)" -eq 6000
+          test "$(wc -c < .bootstrap-v3/chunk-05)" -eq 6000
+          test "$(wc -c < .bootstrap-v3/chunk-06)" -eq 6000
+          test "$(wc -c < .bootstrap-v3/chunk-07a)" -eq 3000
+          test "$(wc -c < .bootstrap-v3/chunk-07b)" -eq 3000
+          test "$(wc -c < .bootstrap-v3/chunk-08)" -eq 6000
+          test "$(wc -c < .bootstrap-v3/chunk-09)" -eq 6000
+          test "$(wc -c < .bootstrap-v3/chunk-10)" -eq 980
+
+          cat \
+            .bootstrap-v3/chunk-00 \
+            .bootstrap-v3/chunk-01 \
+            .bootstrap-v3/chunk-02 \
+            .bootstrap-v3/chunk-03a \
+            .bootstrap-v3/chunk-03b \
+            .bootstrap-v3/chunk-04 \
+            .bootstrap-v3/chunk-05 \
+            .bootstrap-v3/chunk-06 \
+            .bootstrap-v3/chunk-07a \
+            .bootstrap-v3/chunk-07b \
+            .bootstrap-v3/chunk-08 \
+            .bootstrap-v3/chunk-09 \
+            .bootstrap-v3/chunk-10 > /tmp/archi-release.b64
+
+          test "$(wc -c < /tmp/archi-release.b64)" -eq 60980
+          base64 --decode /tmp/archi-release.b64 > /tmp/archi-release.tar.gz
+          echo "db797d65a1f33ed0aa9868764fc3edccd9c1b1dfa4a3c490a1e01f5cee3be19  /tmp/archi-release.tar.gz" | sha256sum -c -
+
+          if tar -tzf /tmp/archi-release.tar.gz | grep -Eq '(^/|(^|/)\.\.(/|$))'; then
+            echo "Unsafe archive path detected" >&2
+            exit 1
+          fi
+          tar -tzf /tmp/archi-release.tar.gz | grep -qx 'README.md'
+          tar -tzf /tmp/archi-release.tar.gz | grep -qx 'pyproject.toml'
+          tar -tzf /tmp/archi-release.tar.gz | grep -qx 'archi_studio/cli.py'
+          tar -tzf /tmp/archi-release.tar.gz | grep -qx '.github/workflows/test.yml'
+
+      - name: Publish clean source tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          find . -mindepth 1 -maxdepth 1 ! -name .git ! -name .bootstrap-v3 -exec rm -rf {} +
+          tar -xzf /tmp/archi-release.tar.gz -C .
+          rm -rf .bootstrap-v3
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "feat: release Archi Studio Skill v1.1.0"
+          git push origin HEAD:main
