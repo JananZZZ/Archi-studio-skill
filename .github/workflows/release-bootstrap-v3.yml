@@ -59,9 +59,6 @@ jobs:
           test "${#ARCHIVE_SHA}" -eq 64
           echo "Validated archive SHA-256: ${ARCHIVE_SHA}"
 
-          # Materialize the complete member list once. Piping `tar -t` into a
-          # short-circuiting grep under `pipefail` makes tar receive SIGPIPE and
-          # turns a valid archive into a false failure.
           tar -tzf /tmp/archi-release.tar.gz > /tmp/archi-release.list
           if grep -Eq '(^/|(^|/)\.\.(/|$))' /tmp/archi-release.list; then
             echo "Unsafe archive path detected" >&2
@@ -76,9 +73,15 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          find . -mindepth 1 -maxdepth 1 ! -name .git ! -name .bootstrap-v3 -exec rm -rf {} +
+
+          # The PR head is only a transport carrier. Build the actual release commit
+          # directly on the latest remote main so the final push is a normal
+          # fast-forward even if main advanced while the bootstrap PR was running.
+          git fetch origin main
+          git checkout -B publish-base origin/main
+
+          find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
           tar -xzf /tmp/archi-release.tar.gz -C .
-          rm -rf .bootstrap-v3
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
