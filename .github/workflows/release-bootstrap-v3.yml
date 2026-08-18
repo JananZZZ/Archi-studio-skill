@@ -59,14 +59,18 @@ jobs:
           test "${#ARCHIVE_SHA}" -eq 64
           echo "Validated archive SHA-256: ${ARCHIVE_SHA}"
 
-          if tar -tzf /tmp/archi-release.tar.gz | grep -Eq '(^/|(^|/)\.\.(/|$))'; then
+          # Materialize the complete member list once. Piping `tar -t` into a
+          # short-circuiting grep under `pipefail` makes tar receive SIGPIPE and
+          # turns a valid archive into a false failure.
+          tar -tzf /tmp/archi-release.tar.gz > /tmp/archi-release.list
+          if grep -Eq '(^/|(^|/)\.\.(/|$))' /tmp/archi-release.list; then
             echo "Unsafe archive path detected" >&2
             exit 1
           fi
-          tar -tzf /tmp/archi-release.tar.gz | grep -qx 'README.md'
-          tar -tzf /tmp/archi-release.tar.gz | grep -qx 'pyproject.toml'
-          tar -tzf /tmp/archi-release.tar.gz | grep -qx 'archi_studio/cli.py'
-          tar -tzf /tmp/archi-release.tar.gz | grep -qx '.github/workflows/test.yml'
+          grep -qx 'README.md' /tmp/archi-release.list
+          grep -qx 'pyproject.toml' /tmp/archi-release.list
+          grep -qx 'archi_studio/cli.py' /tmp/archi-release.list
+          grep -qx '.github/workflows/test.yml' /tmp/archi-release.list
 
       - name: Publish clean source tree
         shell: bash
